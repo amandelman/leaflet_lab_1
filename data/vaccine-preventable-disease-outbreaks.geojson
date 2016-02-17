@@ -2204,7 +2204,7 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          80.5,
+          -80.5,
           39
         ]
       }
