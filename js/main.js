@@ -6,7 +6,7 @@ var map = L.map("map").setView([39.8282, -98.5795], 4);
 
 //load and display a tile layer on the map
 var Stamen_Toner = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.{ext}', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> and <a href="http://www.cfr.org/interactives/GH_Vaccine_Map/#introduction">Council on Foreign Relations</a>, "Vaccine-Preventable Outbreaks," 2015',
 	subdomains: 'abcd',
 	minZoom: 0,
 	maxZoom: 20,
@@ -71,7 +71,7 @@ function createPropSymbols(data, map){
     L.geoJson(data, {
         pointToLayer: function (feature, latlng) {
             //for each feature, determine its value for the selected attribute
-            var attValue = Number(feature.properties.Cases2008, feature.properties.Cases2009);
+            var attValue = Number(feature.properties.Cases2015);
 //            var attValue2009 = Number(feature.properties.Cases2009);
 //            var attValue2010 = Number(feature.properties.Cases2010);
 //            var attValue2011 = Number(feature.properties.Cases2011);
