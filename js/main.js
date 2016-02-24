@@ -14,81 +14,7 @@ var Stamen_Toner = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{
 }).addTo(map);
 
 
-//Create a function that passes two parameters: feature and layer.
-function onEachFeature(feature, layer) {
-//since there's no property named popupContent, create html string with all properties
-    var popupContent = "";
-    if (feature.properties) {
-        //loop to add feature property names and values to html string and append them to a popup
-        for (var property in feature.properties){
-            popupContent += "<p>" + "property" + ": " + feature.properties[property] + "</p>";
-        }
-        layer.bindPopup(popupContent);
-    };
-};
 
-
-////call vaccine-preventable outbreaks data
-//$.ajax("data/vaccine-preventable-disease-outbreaks.geojson", {
-//        dataType: "json",
-//        success: function(response){
-//            //create a variable for a custome marker
-//            var geojsonMarkerOptions = {
-//                radius: 15,
-//                fillColor: "#f121b1",
-//                color: "#09ef7c",
-//                weight: 3,
-//                opacity: 0.6,
-//                fillOpacity: 0.4
-//                };
-////create a Leaflet GeoJSON layer and add the custom markers with clickable popups to the map
-//            L.geoJson(response, {
-//                onEachFeature: onEachFeature,
-//                pointToLayer: function (feature, latlng) {
-//                return L.circleMarker(latlng, geojsonMarkerOptions);
-//                }
-//            }).addTo(map);
-//        }
-//});
-
-//Step 3: Add circle markers for point features to the map
-function createPropSymbols(data, map){
-    
-    //determine which attribute to visualize with proportional symbols
-    var attribute = "Cases2008";
-    
-    //create marker options
-    var geojsonMarkerOptions = {
-        radius: 15,
-        fillColor: "#f121b1",
-        color: "#09ef7c",
-        weight: 3,
-        opacity: 0.6,
-        fillOpacity: 0.4
-    };
-
-    //create a Leaflet GeoJSON layer and add it to the map
-    L.geoJson(data, {
-        pointToLayer: function (feature, latlng) {
-            //for each feature, determine its value for the selected attribute
-            var attValue = Number(feature.properties.Cases2015);
-//            var attValue2009 = Number(feature.properties.Cases2009);
-//            var attValue2010 = Number(feature.properties.Cases2010);
-//            var attValue2011 = Number(feature.properties.Cases2011);
-//            var attValue2012 = Number(feature.properties.Cases2012);
-//            var attValue2013 = Number(feature.properties.Cases2013);
-//            var attValue2014 = Number(feature.properties.Cases2014);
-//            var attValue2015 = Number(feature.properties.Cases2015);
-
-            
-            //give each feature's circle marker a radius based on its attribute value
-            geojsonMarkerOptions.radius = calcPropRadius(attValue);
-
-            //create circle markers
-            return L.circleMarker(latlng, geojsonMarkerOptions);
-        }
-    }).addTo(map);
-};
 
 //calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
@@ -101,6 +27,7 @@ function calcPropRadius(attValue) {
 
     return radius;
 };
+
 
 //Step 2: Import GeoJSON data
 function getData(map){
@@ -116,7 +43,136 @@ function getData(map){
     });
 };
 
-getData(map);
+//function to convert markers to circle markers
+function pointToLayer(feature, latlng, attributes){
+    //Determine which attribute to visualize with proportional symbols
+    var attribute = attributes[0];
+    
+     //check
+    console.log(attribute);
 
-//////    //Step 4: Determine which attribute to visualize with proportional symbols
-////  
+    //create marker options
+    var options = {
+        radius: 15,
+        fillColor: "#f121b1",
+        color: "#09ef7c",
+        weight: 3,
+        opacity: 0.6,
+        fillOpacity: 0.4
+    };
+
+    //For each feature, determine its value for the selected attribute
+    var attValue = Number(feature.properties.Cases2015);
+
+    //Give each feature's circle marker a radius based on its attribute value
+    options.radius = calcPropRadius(attValue);
+
+    //create circle marker layer
+    var layer = L.circleMarker(latlng, options);
+
+    var year = attribute.split("_")[1];
+    console.log(year);
+//    popupContent += "<p><b>Population in " + year + ":</b> " + feature.properties[attribute] + " million</p>";
+    
+    //build popup content string
+    var popupContent = "<p><b><u>" + feature.properties.Outbreak + "</p></b></u>" + "<p><b>City:</b> " + feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + feature.properties.Cases2015 + "</p><p><b>" + "Fatalities" + ":</b> " + feature.properties.Fatalities2015 + "</p>";
+
+    //bind the popup to the circle marker
+    layer.bindPopup(popupContent);
+
+    //return the circle marker to the L.geoJson pointToLayer option
+    return layer;
+};
+
+//Add circle markers for point features to the map
+function createPropSymbols(data, map, attributes){
+    //create a Leaflet GeoJSON layer and add it to the map
+    L.geoJson(data, {
+        pointToLayer: function(feature, latlng){
+            return pointToLayer(feature, latlng, attributes);
+        }
+    }).addTo(map);
+};
+
+
+
+//GOAL: Allow the user to sequence through the attributes and resymbolize the map
+//   according to each attribute
+//STEPS:
+//3. Create an array of the sequential attributes to keep track of their order
+//4. Assign the current attribute based on the index of the attributes array
+//5. Listen for user input via affordances
+//6. For a forward step through the sequence, increment the attributes array index;
+//   for a reverse step, decrement the attributes array index
+//7. At either end of the sequence, return to the opposite end of the seqence on the next step
+//   (wrap around)
+//8. Update the slider position based on the new index
+//9. Reassign the current attribute based on the new attributes array index
+//10. Resize proportional symbols according to each feature's value for the new attribute
+
+//Step 1: Create new sequence controls
+function createSequenceControls(map){
+    //create range input element (slider)
+    $('#panel').append('<input class="range-slider" type="range">');
+    
+    $('#panel').append('<button class="skip" id="reverse">Reverse</button>');
+
+    //set slider attributes
+    $('.range-slider').attr({
+        max: 7,
+        min: 0,
+        value: 0,
+        step: 1
+    });
+
+    $('#panel').append('<button class="skip" id="forward">Skip</button>');
+
+ $('#reverse').html('<img src="img/reverse.png">');
+    $('#forward').html('<img src="img/forward.png">');
+
+    
+};
+
+
+
+//build an attributes array from the data
+function processData(data){
+    //empty array to hold attributes
+    var attributes = [];
+
+    //properties of the first feature in the dataset
+    var properties = data.features[0].properties;
+
+    //push each attribute name into attributes array
+    for (var attribute in properties){
+        //only take attributes with population values
+        if (attribute.indexOf("Cases") > -1){
+            attributes.push(attribute);
+        };
+    };
+
+    //check result
+    console.log(attributes);
+
+    return attributes;
+    
+};
+
+//Import GeoJSON data
+function getData(map){
+    //load the data
+    $.ajax("data/vaccine-preventable-disease-outbreaks.geojson", {
+        dataType: "json",
+        success: function(response){
+            var attributes = processData(response);
+
+            createPropSymbols(response, map, attributes);
+            createSequenceControls(map, attributes);
+
+        }
+    });
+};
+
+
+
+getData(map);

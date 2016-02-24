@@ -1,12 +1,35 @@
 /* Stylesheet by Adam Mandelman, 2016 */
 
-#map {height: 600px;}
+#map {
+    height: 600px;
+    width: 75%;
+    display: inline-block;    
+}
+
+#panel {
+    width: 20%;
+    padding: 20px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    line-height: 42px;
+}
+
+.range-slider {
+    width: 60%;
+}
+
+#forward {
+    float: right;
+}
+
+#reverse {
+    float: left;
+}
 
 
-/*
-#spacer {height: 20px;}
+.leaflet-popup-content p {
+    margin: 0.2em 0;
+}
 
-#map2 {height: 100px;}
 
-#map3 {height:400px;}
-*/
