@@ -6,14 +6,12 @@ var map = L.map("map").setView([39.8282, -98.5795], 4);
 
 //load and display a tile layer on the map
 var Stamen_Toner = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.{ext}', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> and <a href="http://www.cfr.org/interactives/GH_Vaccine_Map/#introduction">Council on Foreign Relations</a>, "Vaccine-Preventable Outbreaks," 2015',
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> and <a href="http://www.cfr.org/interactives/GH_Vaccine_Map/#introduction">Council on Foreign Relations</a>, "Vaccine-Preventable Outbreaks," 2015. Sequencer buttons courtesy of Clockwise.',
 	subdomains: 'abcd',
 	minZoom: 0,
 	maxZoom: 20,
 	ext: 'png'
 }).addTo(map);
-
-
 
 
 //calculate the radius of each proportional symbol
@@ -35,7 +33,7 @@ function getData(map){
     $.ajax("data/vaccine-preventable-disease-outbreaks.geojson", {
         dataType: "json",
         success: function(response){
-            //call function to create proportional symbols
+    //call function to create proportional symbols
             createPropSymbols(response, map);
             
         }
@@ -46,10 +44,10 @@ function getData(map){
 //function to convert markers to circle markers
 function pointToLayer(feature, latlng, attributes){
     //Determine which attribute to visualize with proportional symbols
-    var attribute = attributes[0];
+    var attribute = attributes[7];
     
      //check
-    console.log(attribute);
+//    console.log(attribute);
 
     //create marker options
     var options = {
@@ -70,12 +68,12 @@ function pointToLayer(feature, latlng, attributes){
     //create circle marker layer
     var layer = L.circleMarker(latlng, options);
 
-    var year = attribute.split("_")[1];
+    var year = attribute.split("es")[1];
     console.log(year);
 //    popupContent += "<p><b>Population in " + year + ":</b> " + feature.properties[attribute] + " million</p>";
     
     //build popup content string
-    var popupContent = "<p><b><u>" + feature.properties.Outbreak + "</p></b></u>" + "<p><b>City:</b> " + feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + feature.properties.Cases2015 + "</p><p><b>" + "Fatalities" + ":</b> " + feature.properties.Fatalities2015 + "</p>";
+    var popupContent = "<p><b><u>" + feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>City:</b> " + feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + feature.properties.Cases2015 + "</p><p><b>" + "Fatalities" + ":</b> " + feature.properties.Fatalities2015 + "</p>";
 
     //bind the popup to the circle marker
     layer.bindPopup(popupContent);
@@ -99,7 +97,6 @@ function createPropSymbols(data, map, attributes){
 //GOAL: Allow the user to sequence through the attributes and resymbolize the map
 //   according to each attribute
 //STEPS:
-//3. Create an array of the sequential attributes to keep track of their order
 //4. Assign the current attribute based on the index of the attributes array
 //5. Listen for user input via affordances
 //6. For a forward step through the sequence, increment the attributes array index;
@@ -135,29 +132,6 @@ function createSequenceControls(map){
 
 
 
-//build an attributes array from the data
-function processData(data){
-    //empty array to hold attributes
-    var attributes = [];
-
-    //properties of the first feature in the dataset
-    var properties = data.features[0].properties;
-
-    //push each attribute name into attributes array
-    for (var attribute in properties){
-        //only take attributes with population values
-        if (attribute.indexOf("Cases") > -1){
-            attributes.push(attribute);
-        };
-    };
-
-    //check result
-    console.log(attributes);
-
-    return attributes;
-    
-};
-
 //Import GeoJSON data
 function getData(map){
     //load the data
@@ -171,6 +145,33 @@ function getData(map){
 
         }
     });
+    
+    //build an attributes array from the data
+function processData(data){
+    //empty array to hold attributes
+    var attributes = [];
+
+    //properties of the first feature in the dataset
+    var properties = data.features[0].properties;
+    
+    console.log(typeof data);
+
+    //push each attribute name into attributes array
+    for (var attribute in properties){
+        //only take attributes with population values
+        if (attribute.indexOf("Cases") > -1){
+            attributes.push(attribute);
+        };
+    };
+
+    //check result
+//    console.log(attributes);
+
+    return attributes;
+    
+};
+
+
 };
 
 
