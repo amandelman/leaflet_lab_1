@@ -1,5 +1,6 @@
 // Javascript by Adam Mandelman, 2016
 
+//var attType = "Cases";
 
 function createMap(){
 //initialize the map on the "map" div with a given center aand zoom level
@@ -27,6 +28,7 @@ function calcPropRadius(attValue) {
     var radius = Math.sqrt(area/Math.PI);
 
     return radius;
+
 };
 
 
@@ -34,7 +36,8 @@ function calcPropRadius(attValue) {
 //function to convert markers to circle markers
 function pointToLayer(feature, latlng, attributes){
     //Determine which attribute to visualize with proportional symbols
-    var attribute = attributes[0];
+//    attribute = attType+attributes[0];
+    attribute = attributes[0];
     
     //create marker options
     var options = {
@@ -57,13 +60,15 @@ function pointToLayer(feature, latlng, attributes){
     
     var year = attribute.split("es")[1];
 //    build popup content string
-    var popupContent = "<p><b><u>" + feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + feature.properties[attribute] + "</p><p><b>" + "Fatalities" + ":</b> " + feature.properties[attribute] + "</p>";
+    var popupContent = "<p><b><u>" + feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + feature.properties[attribute] + "</p>";
         
     //bind the popup to the circle marker
     layer.bindPopup(popupContent);
 
     //return the circle marker to the L.geoJson pointToLayer option
     return layer;
+    
+    
 };
 
 //Add circle markers for point features to the map
@@ -128,7 +133,7 @@ function createSequenceControls(map, attributes){
         $('.range-slider').val(index);
         //pass new attribute to update symbols
         updatePropSymbols(map, attributes[index]);
-//        console.log(attributes[index]);
+        console.log(attributes[index]);
     });
     
 //     input listener for slider
@@ -142,40 +147,31 @@ function createSequenceControls(map, attributes){
 
 //Step 10: Resize proportional symbols according to new attribute values
 function updatePropSymbols(map, attribute){
+    
+//    attribute = attType+attribute;
+    attribute = attribute;
+    
     map.eachLayer(function(layer){
-        console.log(layer.feature);
-        if (layer.feature && layer.feature.properties[attribute]){
+        if (layer.feature && String(layer.feature.properties[attribute])){
             //update the layer style and popup
             //access feature properties
             
-//            if (layer.feature.properties[attribute]==0) {
-//                map.removeLayer(attribute)
-//                };    
-//            } else {  
-            
             var props = layer.feature.properties;
             
-//            console.log(layer.feature.properties[attribute]);
-//          update each feature's radius based on new attribute values
-//            if (layer.feature.properties[attribute]==0) {
-//                var options = {
-//                    opacity: 0,
-//                };    
-//            } else {
             var radius = calcPropRadius(props[attribute]);
             layer.setRadius(radius);
-            };
             
             console.log(radius);
             //add formatted attribute to panel content string
             var year = attribute.split("es")[1];
             
-            var popupContent = "<p><b><u>" + layer.feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + layer.feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + layer.feature.properties[attribute]  + "</p><p><b>" + "Fatalities" + ":</b> " + layer.feature.properties[attribute] + "</p>";
+            var popupContent = "<p><b><u>" + layer.feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + layer.feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + layer.feature.properties[attribute]  + "</p>";
 //            
 
             //replace the layer popup
             layer.bindPopup(popupContent, {
             });
+        }
         });
     };
 
@@ -210,6 +206,8 @@ function getData(map){
         success: function(response){
             var attributes = processData(response);
 
+//            attributes = ['2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015'];
+            
             createPropSymbols(response, map, attributes);
             createSequenceControls(map, attributes);
         }

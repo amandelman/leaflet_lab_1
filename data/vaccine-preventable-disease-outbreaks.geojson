@@ -1,52 +1,7 @@
 {
   "type": "FeatureCollection",
   "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "Location": "Alaska",
-        "Outbreak": "Whooping Cough",
-        "Cases2008": 0,
-        "Fatalities2008": 0,
-        "Source2008": "",
-        "Link2008": "",
-        "Cases2009": 0,
-        "Fatalities2009": 0,
-        "Source2009": "",
-        "Link2009": "",
-        "Cases2010": 0,
-        "Fatalities2010": 0,
-        "Source2010": "",
-        "Link2010": "",
-        "Cases2011": 0,
-        "Fatalities2011": 0,
-        "Source2011": "",
-        "Link2011": "",
-        "Cases2012": 0,
-        "Fatalities2012": 0,
-        "Source2012": "",
-        "Link2012": "",
-        "Cases2013": 0,
-        "Fatalities2013": 0,
-        "Source2013": "",
-        "Link2013": "",
-        "Cases2014": 130,
-        "Fatalities2014": 0,
-        "Source2014": "Newsminer.com. \"More than 100 cases of whooping cough reported in 2014 in Alaska.\" January 4, 2015.",
-        "Link2014": "http://www.newsminer.com/features/health/more-than-cases-of-whooping-cough-reported-in-in-alaska/article_55b07906-94b4-11e4-bab0-2f9260573e86.html",
-        "Cases2015": 0,
-        "Fatalities2015": 0,
-        "Source2015": "",
-        "Link2015": ""
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -150,
-          64
-        ]
-      }
-    },
+    
     {
       "type": "Feature",
       "properties": {
@@ -1850,7 +1805,7 @@
         "Fatalities2008": 0,
         "Source2008": "The Herald. \"Local whooping cough outbreak sickens 32.\" November 26, 2008.",
         "Link2008": "http://www.sharonherald.com/local/x1208362045/Local-whooping-cough-outbreak-sickens-32",
-        "Cases2009": 0,
+        "Cases2009": "0",
         "Fatalities2009": 0,
         "Source2009": "",
         "Link2009": "",
