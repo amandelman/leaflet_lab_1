@@ -1,7 +1,5 @@
 // Javascript by Adam Mandelman, 2016
 
-//var attType = "Cases";
-
 function createMap(){
 //initialize the map on the "map" div with a given center aand zoom level
     var map = L.map("map").setView([39.8282,        -98.5795], 4);
@@ -34,9 +32,7 @@ function calcPropRadius(attValue) {
 function pointToLayer(feature, latlng, attributes){
     //Determine which attribute to visualize with proportional symbols
     attribute = attributes[0];
-    
-    console.log(feature);
-        
+            
     if (feature.properties.Outbreak == "Whooping Cough"){
     
     //create marker options
@@ -74,6 +70,8 @@ function pointToLayer(feature, latlng, attributes){
     };
     //For each feature, determine its value for the selected attribute
     var attValue = Number(feature.properties[attribute]);
+    
+//    console.log(feature.properties);
 
     //Give each feature's circle marker a radius based on its attribute value
     options.radius = calcPropRadius(attValue);
@@ -104,8 +102,10 @@ function createPropSymbols(data, map, attributes){
     L.geoJson(data, {
         pointToLayer: function(feature, latlng){
             return pointToLayer(feature, latlng, attributes);
+            
         }
     }).addTo(map);
+    
 };
 
 //Step 1: Create new sequence controls
@@ -162,7 +162,7 @@ function createSequenceControls(map, attributes){
 function updatePropSymbols(map, attribute){
     
 //    attribute = attType+attribute;
-    attribute = attribute;
+//    attribute = attribute;
     
     map.eachLayer(function(layer){
         if (layer.feature && String(layer.feature.properties[attribute])){
@@ -238,40 +238,39 @@ function createFilterButtons(map, data){
     $('#panel').append('<button type="button" class="btn mumps">Mumps</button>');
     $('#panel').append('<button type="button" class="btn pox">Chicken Pox</button>');
     
-    console.log(data.features);
+        
     
-    
-    //look at processdata for clues???
+    //look at processdata or createPropSymbol for clues???
     
     var diseaseAttributes = [];
     
-    var disease = data.features[0].properties;
+    var disease = data.features[1].properties.Outbreak;
     
     console.log(disease);
-//    
-//    for (var diseaseAttribute in disease){
+        
+//    for (var diseaseAttributes in disease){
 //        //only take attributes with population values
 //        if (diseaseAttribute.indexOf("Outbreak") > -1){
 //            diseaseAttributes.push(diseaseAttribute);
 //        };
-//    console.log(disease);    
 //    };
     
-    
+    $('.whooping').click(function(layer){
+        if (disease=="Whooping Cough"){
+            radius = 0;
+            updatePropSymbols(map, attribute);
+            }
+    });
 
-//    
-//    console.log(data.features);
-//    $('.whooping').click(L.geoJson(data.feature){
-//        alert("Hello! I am an alert box!");
-//    });
     
     $('.measles').click(function(){
-        alert("Hello! You have the measles!");
+        alert("You have the measles!");
     });
     
     $('.mumps').click(function(){
-        alert("Hello! MUMPS!");
+        alert("MUMPS!");
     });
+
     
     $('.pox').click(function(){
         alert("Hello! A pox on you!");

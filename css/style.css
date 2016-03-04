@@ -16,29 +16,40 @@
 }
 
 .whooping {
-    background-color: rgba(33, 225, 241, 0.4);
-    display:inline-block;
-    
+/*    font-family: Helvetica, sans-serif;*/
+    background-color: rgba(33, 225, 241, 0.4);    
     float:left;
     margin: 0px 1px;
+    border-radius: 4px;
+    border-color: rgba(33, 225, 241, 0.4);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .measles {
     background-color: rgba(191, 1, 16, 0.6);
     float:left;
     margin: 0px 1px;
+    border-radius: 4px;
+    border-color: rgba(191, 1, 16, 0.6);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .mumps {
     background-color: rgba(162, 54, 255, 0.6);
     float:left;
     margin: 0px 1px;
+    border-radius: 4px;
+    border-color: rgba(162, 54, 255, 0.6);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .pox {
     background-color: rgba(240, 232, 35, 0.8);
     float:left;
     margin: 0px 1px;
+    border-radius: 4px;
+    border-color: rgba(240, 232, 35, 0.8);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .range-slider {
