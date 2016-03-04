@@ -10,7 +10,7 @@ function createMap(){
     var Stamen_Toner = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.{ext}', {
 	       attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> and <a href="http://www.cfr.org/interactives/GH_Vaccine_Map/#introduction">Council on Foreign Relations</a>, "Vaccine-Preventable Outbreaks," 2015. Sequencer buttons courtesy of Clockwise.',
 	       subdomains: 'abcd',
-	       minZoom: 0,
+	       minZoom: 4,
 	       maxZoom: 5,
 	       ext: 'png'
     }).addTo(map);
@@ -28,16 +28,15 @@ function calcPropRadius(attValue) {
     var radius = Math.sqrt(area/Math.PI);
 
     return radius;
-
 };
-
-
 
 //function to convert markers to circle markers
 function pointToLayer(feature, latlng, attributes){
     //Determine which attribute to visualize with proportional symbols
     attribute = attributes[0];
     
+    console.log(feature);
+        
     if (feature.properties.Outbreak == "Whooping Cough"){
     
     //create marker options
@@ -92,8 +91,6 @@ function pointToLayer(feature, latlng, attributes){
 
     //return the circle marker to the L.geoJson pointToLayer option
     return layer;
-    
-    
 };
 
 //Add circle markers for point features to the map
@@ -172,12 +169,6 @@ function updatePropSymbols(map, attribute){
             //update the layer style and popup
             //access feature properties
             
-//            if (layer.feature.properties.Cases2015 = 129) {
-//                bringToBack(layer.feature.properties.Cases2015);
-//            };
-//        
-            
-            
             var props = layer.feature.properties;
             
             var radius = calcPropRadius(props[attribute]);
@@ -210,11 +201,9 @@ function processData(data){
         //only take attributes with population values
         if (attribute.indexOf("Cases") > -1){
             attributes.push(attribute);
-        };
-        
+        };  
     };
         
-
     return attributes;
     
 };
@@ -231,16 +220,65 @@ function getData(map){
             
             createPropSymbols(response, map, attributes);
             createSequenceControls(map, attributes);
+            createFilterButtons(map, response);
         }
+    });
+};
+
+//Pseudocode for filter operator
+//Step 2: Create filters for each disease
+//Step 3: Listen for user events
+//Step 4: Update the map based on toggled buttons
+
+
+function createFilterButtons(map, data){    
+    //Create buttons for 4 diseases
+    $('#panel').append('<button type="button" class="btn whooping">Whooping Cough</button>');
+    $('#panel').append('<button type="button" class="btn measles">Measles</button>');
+    $('#panel').append('<button type="button" class="btn mumps">Mumps</button>');
+    $('#panel').append('<button type="button" class="btn pox">Chicken Pox</button>');
+    
+    console.log(data.features);
+    
+    
+    //look at processdata for clues???
+    
+    var diseaseAttributes = [];
+    
+    var disease = data.features[0].properties;
+    
+    console.log(disease);
+//    
+//    for (var diseaseAttribute in disease){
+//        //only take attributes with population values
+//        if (diseaseAttribute.indexOf("Outbreak") > -1){
+//            diseaseAttributes.push(diseaseAttribute);
+//        };
+//    console.log(disease);    
+//    };
+    
+    
+
+//    
+//    console.log(data.features);
+//    $('.whooping').click(L.geoJson(data.feature){
+//        alert("Hello! I am an alert box!");
+//    });
+    
+    $('.measles').click(function(){
+        alert("Hello! You have the measles!");
+    });
+    
+    $('.mumps').click(function(){
+        alert("Hello! MUMPS!");
+    });
+    
+    $('.pox').click(function(){
+        alert("Hello! A pox on you!");
     });
 
 
 };
-
-//layer.features.properties.sort(function(a,b) {
-//			return a.properties.Cases2009 - b.properties.Cases2010
-//		});
-
 
 
 $(document).ready(createMap);
