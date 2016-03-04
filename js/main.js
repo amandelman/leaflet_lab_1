@@ -11,7 +11,7 @@ function createMap(){
 	       attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> and <a href="http://www.cfr.org/interactives/GH_Vaccine_Map/#introduction">Council on Foreign Relations</a>, "Vaccine-Preventable Outbreaks," 2015. Sequencer buttons courtesy of Clockwise.',
 	       subdomains: 'abcd',
 	       minZoom: 0,
-	       maxZoom: 20,
+	       maxZoom: 5,
 	       ext: 'png'
     }).addTo(map);
 
@@ -21,7 +21,7 @@ function createMap(){
 //calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
     //scale factor to adjust symbol size evenly
-    var scaleFactor = 8;
+    var scaleFactor = 7;
     //area based on attribute value and scale factor
     var area = attValue * scaleFactor;
     //radius calculated based on area
@@ -36,18 +36,43 @@ function calcPropRadius(attValue) {
 //function to convert markers to circle markers
 function pointToLayer(feature, latlng, attributes){
     //Determine which attribute to visualize with proportional symbols
-//    attribute = attType+attributes[0];
     attribute = attributes[0];
     
+    if (feature.properties.Outbreak == "Whooping Cough"){
+    
     //create marker options
-    var options = {
-        fillColor: "#f121b1",
-//        color: "#09ef7c",
-        weight: 0,
-        opacity: 0.6,
-        fillOpacity: 0.4
+        var options = {
+            fillColor: "#21e1f1",
+            weight: 0,
+            opacity: 0.6,
+            fillOpacity: 0.4
+        };
+    
+    } else if (feature.properties.Outbreak == "Measles")  {
+        var options = {
+            fillColor: "#bf0110",
+            weight: 0,
+            opacity: 0.6,
+            fillOpacity: 0.6
+        };
+        
+    } else if (feature.properties.Outbreak == "Mumps") {
+        var options = {
+            fillColor: "#a236ff",
+            weight: 0,
+            opacity: 0.6,
+            fillOpacity: 0.6
+        };        
+        
+    } else {
+        var options = {
+            fillColor: "#f0e823",
+            weight: 0,
+            opacity: 0.6,
+            fillOpacity: 0.8
+        };        
+        
     };
-
     //For each feature, determine its value for the selected attribute
     var attValue = Number(feature.properties[attribute]);
 
@@ -73,6 +98,11 @@ function pointToLayer(feature, latlng, attributes){
 
 //Add circle markers for point features to the map
 function createPropSymbols(data, map, attributes){
+    //sort circle layer order for 2015 to address California pop-up problem
+    data.features.sort(function(a,b) {
+        b.properties.Cases2015 - a.properties.Cases2015;    
+    });
+    
     //create a Leaflet GeoJSON layer and add it to the map
     L.geoJson(data, {
         pointToLayer: function(feature, latlng){
@@ -80,19 +110,6 @@ function createPropSymbols(data, map, attributes){
         }
     }).addTo(map);
 };
-
-
-
-//GOAL: Allow the user to sequence through the attributes and resymbolize the map
-//   according to each attribute
-//STEPS:
-//6. For a forward step through the sequence, increment the attributes array index;
-//   for a reverse step, decrement the attributes array index
-//7. At either end of the sequence, return to the opposite end of the seqence on the next step
-//   (wrap around)
-//8. Update the slider position based on the new index
-//9. Reassign the current attribute based on the new attributes array index
-//10. Resize proportional symbols according to each feature's value for the new attribute
 
 //Step 1: Create new sequence controls
 function createSequenceControls(map, attributes){
@@ -133,7 +150,6 @@ function createSequenceControls(map, attributes){
         $('.range-slider').val(index);
         //pass new attribute to update symbols
         updatePropSymbols(map, attributes[index]);
-        console.log(attributes[index]);
     });
     
 //     input listener for slider
@@ -156,12 +172,17 @@ function updatePropSymbols(map, attribute){
             //update the layer style and popup
             //access feature properties
             
+//            if (layer.feature.properties.Cases2015 = 129) {
+//                bringToBack(layer.feature.properties.Cases2015);
+//            };
+//        
+            
+            
             var props = layer.feature.properties;
             
             var radius = calcPropRadius(props[attribute]);
             layer.setRadius(radius);
             
-            console.log(radius);
             //add formatted attribute to panel content string
             var year = attribute.split("es")[1];
             
@@ -215,6 +236,10 @@ function getData(map){
 
 
 };
+
+//layer.features.properties.sort(function(a,b) {
+//			return a.properties.Cases2009 - b.properties.Cases2010
+//		});
 
 
 
