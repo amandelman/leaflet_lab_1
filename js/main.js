@@ -237,31 +237,38 @@ function createFilterButtons(map, data){
     $('#panel').append('<button type="button" class="btn measles">Measles</button>');
     $('#panel').append('<button type="button" class="btn mumps">Mumps</button>');
     $('#panel').append('<button type="button" class="btn pox">Chicken Pox</button>');
+  
+    //Create a container for layers we're going to remove. Note: I have no idea if this is correct.
+    var offLayers = [];
     
-        
+    var diseaseLayers = 
     
-    //look at processdata or createPropSymbol for clues???
-    
-    var diseaseAttributes = [];
-    
-    var disease = data.features[1].properties.Outbreak;
-    
-    console.log(disease);
-        
-//    for (var diseaseAttributes in disease){
-//        //only take attributes with population values
-//        if (diseaseAttribute.indexOf("Outbreak") > -1){
-//            diseaseAttributes.push(diseaseAttribute);
-//        };
-//    };
-    
-    $('.whooping').click(function(layer){
-        if (disease=="Whooping Cough"){
-            radius = 0;
-            updatePropSymbols(map, attribute);
-            }
-    });
+    //Listen for button clicks and set a disease variable to equal whatever button is clicked
+    $('.btn').click(function(layer){
+        var disease = $(this).html();
+        console.log(disease);
+       
+        //Run through each layer to see what kind of Outbreak
+        map.eachLayer(function(layer){
+            if (layer.feature && String(layer.feature.properties.Outbreak)){      
+                var Outbreak = layer.feature.properties.Outbreak
+                    //compare Outbreak with disease
+                    if (Outbreak =! disease){
+                        map.removeLayer(layer.feature);
+                        //Hold layers in offLayers array
+                        offLayers;
+                    }
+//        console.log(layer);
+            
+            };
+        });
+      
+     });
 
+//    if (disease=!"Whooping Cough"){
+//            radius = 0;
+//            updatePropSymbols(map, attribute);
+//            }
     
     $('.measles').click(function(){
         alert("You have the measles!");
