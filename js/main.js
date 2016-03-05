@@ -16,6 +16,7 @@ function createMap(){
     getData(map);
 };
 
+
 //calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
     //scale factor to adjust symbol size evenly
@@ -27,6 +28,17 @@ function calcPropRadius(attValue) {
 
     return radius;
 };
+
+function createPopup(properties, attribute, layer, radius){
+    
+    var year = attribute.split("es")[1];
+//    build popup content string
+    var popupContent = "<p><b><u>" + properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + properties.Location + "</p><p><b>" + "Cases" + ":</b> " + properties[attribute] + "</p>";
+    
+    layer.bindPopup(popupContent);
+        
+};
+
 
 //function to convert markers to circle markers
 function pointToLayer(feature, latlng, attributes){
@@ -69,6 +81,7 @@ function pointToLayer(feature, latlng, attributes){
         
     };
     //For each feature, determine its value for the selected attribute
+//    var attValue = Number(layer.feature.properties[attribute]);
     var attValue = Number(feature.properties[attribute]);
     
 //    console.log(feature.properties);
@@ -80,12 +93,15 @@ function pointToLayer(feature, latlng, attributes){
     var layer = L.circleMarker(latlng, options);
 
     
-    var year = attribute.split("es")[1];
-//    build popup content string
-    var popupContent = "<p><b><u>" + feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + feature.properties[attribute] + "</p>";
-        
-    //bind the popup to the circle marker
-    layer.bindPopup(popupContent);
+    createPopup(feature.properties, attribute, layer, options.radius);
+    
+    
+//    var year = attribute.split("es")[1];
+////    build popup content string
+//    var popupContent = "<p><b><u>" + feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + feature.properties[attribute] + "</p>";
+//        
+//    //bind the popup to the circle marker
+//    layer.bindPopup(popupContent);
 
     //return the circle marker to the L.geoJson pointToLayer option
     return layer;
@@ -110,11 +126,42 @@ function createPropSymbols(data, map, attributes){
 
 //Step 1: Create new sequence controls
 function createSequenceControls(map, attributes){
-    //create range input element (slider)
-    $('#panel').append('<input class="range-slider" type="range">');
     
-    $('#panel').append('<button class="skip" id="reverse">Reverse</button>');
-
+    //create a new SequenceControl Leaflet class
+    var SequenceControl = L.Control.extend({
+        options: {
+            position: "bottomleft"
+        },
+        
+        onAdd: function(map){
+            //create the control container with my control class name
+            var container = L.DomUtil.create("div", "sequence-control-container");
+            
+            //create range slider control
+            $(container).append('<input class="range-slider" type="range">');
+            
+            $(container).append('<button class="skip" id="reverse">Reverse</button>');
+            
+            $(container).append('<button class="skip" id="forward">Skip</button>');
+            
+            $(container).append('<button type="button" class="btn whooping">Whooping Cough</button>');
+            $(container).append('<button type="button" class="btn measles">Measles</button>');
+            $(container).append('<button type="button" class="btn mumps">Mumps</button>');
+            $(container).append('<button type="button" class="btn pox">Chicken Pox</button>');
+            
+            
+            //kill any mouse event listeners on the map
+            $(container).on('mousedown dblclick', function(e){
+                L.DomEvent.stopPropagation(e);
+            });
+            
+            return container;
+        }
+    
+    });
+    
+    map.addControl(new SequenceControl());
+    
     //set slider attributes
     $('.range-slider').attr({
         max: 7,
@@ -122,8 +169,6 @@ function createSequenceControls(map, attributes){
         value: 0,
         step: 1
     });
-
-    $('#panel').append('<button class="skip" id="forward">Skip</button>');
 
     $('#reverse').html('<img src="img/reverse.png">');
     $('#forward').html('<img src="img/forward.png">');
@@ -175,17 +220,19 @@ function updatePropSymbols(map, attribute){
             layer.setRadius(radius);
             
             //add formatted attribute to panel content string
-            var year = attribute.split("es")[1];
-            
-            var popupContent = "<p><b><u>" + layer.feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + layer.feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + layer.feature.properties[attribute]  + "</p>";
+//            var year = attribute.split("es")[1];
 //            
-
-            //replace the layer popup
-            layer.bindPopup(popupContent, {
-            });
+//            var popupContent = "<p><b><u>" + layer.feature.properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + layer.feature.properties.Location + "</p><p><b>" + "Cases" + ":</b> " + layer.feature.properties[attribute]  + "</p>";
+////            
+//
+//            //replace the layer popup
+//            layer.bindPopup(popupContent, {
+//            });
+    createPopup(props, attribute, layer, radius);
+            
         }
-        });
-    };
+    });
+};
 
 
  //build an attributes array from the data
