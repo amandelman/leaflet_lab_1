@@ -225,11 +225,13 @@ function getData(map){
     });
 };
 
-//Pseudocode for filter operator
-//Step 2: Create filters for each disease
-//Step 3: Listen for user events
-//Step 4: Update the map based on toggled buttons
 
+//Fifth interaction operator will be 4 buttons to filter for each of the 4 disease outbreak types (whooping cough, measles, mumps, chicken pox). I couldn't get it up and running, but you can see the beginnings below:
+
+//Remaining pseudocode for filter operator
+//Create filters for each disease
+//Listen for user events (sort of done?)
+//Update the map based on toggled buttons
 
 function createFilterButtons(map, data){    
     //Create buttons for 4 diseases
@@ -241,7 +243,6 @@ function createFilterButtons(map, data){
     //Create a container for layers we're going to remove. Note: I have no idea if this is correct.
     var offLayers = [];
     
-    var diseaseLayers = 
     
     //Listen for button clicks and set a disease variable to equal whatever button is clicked
     $('.btn').click(function(layer){
@@ -255,7 +256,7 @@ function createFilterButtons(map, data){
                     //compare Outbreak with disease
                     if (Outbreak =! disease){
                         map.removeLayer(layer.feature);
-                        //Hold layers in offLayers array
+                        //Hold layers in offLayers array??
                         offLayers;
                     }
 //        console.log(layer);
@@ -265,10 +266,7 @@ function createFilterButtons(map, data){
       
      });
 
-//    if (disease=!"Whooping Cough"){
-//            radius = 0;
-//            updatePropSymbols(map, attribute);
-//            }
+//Some alerts just to show the buttons can do *something*
     
     $('.measles').click(function(){
         alert("You have the measles!");
