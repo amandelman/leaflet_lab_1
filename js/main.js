@@ -31,12 +31,13 @@ function calcPropRadius(attValue) {
 
 function createPopup(properties, attribute, layer, radius){
     
-    var year = attribute.split("es")[1];
+    year = attribute.split("es")[1];
+    
 //    build popup content string
     var popupContent = "<p><b><u>" + properties.Outbreak + ", " + year + "</p></b></u>" + "<p><b>State:</b> " + properties.Location + "</p><p><b>" + "Cases" + ":</b> " + properties[attribute] + "</p>";
     
     layer.bindPopup(popupContent);
-        
+            
 };
 
 
@@ -44,6 +45,7 @@ function createPopup(properties, attribute, layer, radius){
 function pointToLayer(feature, latlng, attributes){
     //Determine which attribute to visualize with proportional symbols
     attribute = attributes[0];
+    
             
     if (feature.properties.Outbreak == "Whooping Cough"){
     
@@ -53,7 +55,7 @@ function pointToLayer(feature, latlng, attributes){
             weight: 0,
             opacity: 0.6,
             fillOpacity: 0.4
-        };
+        }
     
     } else if (feature.properties.Outbreak == "Measles")  {
         var options = {
@@ -61,7 +63,7 @@ function pointToLayer(feature, latlng, attributes){
             weight: 0,
             opacity: 0.6,
             fillOpacity: 0.6
-        };
+        }
         
     } else if (feature.properties.Outbreak == "Mumps") {
         var options = {
@@ -69,7 +71,7 @@ function pointToLayer(feature, latlng, attributes){
             weight: 0,
             opacity: 0.6,
             fillOpacity: 0.6
-        };        
+        }        
         
     } else {
         var options = {
@@ -77,9 +79,9 @@ function pointToLayer(feature, latlng, attributes){
             weight: 0,
             opacity: 0.6,
             fillOpacity: 0.8
-        };        
+        }       
         
-    };
+    }
     //For each feature, determine its value for the selected attribute
 //    var attValue = Number(layer.feature.properties[attribute]);
     var attValue = Number(feature.properties[attribute]);
@@ -186,7 +188,7 @@ function createSequenceControls(map, attributes){
             index--;
             //Step 7: if past the first attribute, wrap around to last attribute
             index = index < 0 ? 7 : index;
-        };
+        }
 
         //Step 8: update slider
         $('.range-slider').val(index);
@@ -232,6 +234,8 @@ function updatePropSymbols(map, attribute){
             
         }
     });
+    
+    updateLegend(map, attribute);
 };
 
 
@@ -248,8 +252,8 @@ function processData(data){
         //only take attributes with population values
         if (attribute.indexOf("Cases") > -1){
             attributes.push(attribute);
-        };  
-    };
+        }  
+    }
         
     return attributes;
     
@@ -268,6 +272,7 @@ function getData(map){
             createPropSymbols(response, map, attributes);
             createSequenceControls(map, attributes);
             createFilterButtons(map, response);
+            createLegend(map, attributes);
         }
     });
 };
@@ -289,8 +294,7 @@ function createFilterButtons(map, data){
   
     //Create a container for layers we're going to remove. Note: I have no idea if this is correct.
     var offLayers = [];
-    
-    
+        
     //Listen for button clicks and set a disease variable to equal whatever button is clicked
     $('.btn').click(function(layer){
         var disease = $(this).html();
@@ -308,7 +312,7 @@ function createFilterButtons(map, data){
                     }
 //        console.log(layer);
             
-            };
+            }
         });
       
      });
@@ -323,12 +327,56 @@ function createFilterButtons(map, data){
         alert("MUMPS!");
     });
 
-    
     $('.pox').click(function(){
         alert("Hello! A pox on you!");
     });
+    
+};
+
+function createLegend(map, attributes){
+    
+    attribute = attributes[0];
+    
+    var LegendControl = L.Control.extend({
+        options: {
+            position: "bottomright"
+        },
+        
+        onAdd: function(map){
+            var container = L.DomUtil.create("div", "legend-control-container");
+            
+        //kill any mouse event listeners on the map
+            $(container).on('mousedown dblclick', function(e){
+                L.DomEvent.stopPropagation(e);
+            });
+            
+        return container;
+            
+        //This shit aint' workin???
+        var year = attribute.split("es")[1];
+    
+        var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>";
+    
+        $(container).html(content);
+            
+        console.log(content);
+            
+        }
+    });
+    
+    map.addControl(new LegendControl());
+};
 
 
+//update temporal legend. Need to fix first index value.
+function updateLegend(map, attribute){
+    
+    var year = attribute.split("es")[1];
+    
+    var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>";
+    
+    $('.legend-control-container').html(content);
+    
 };
 
 
