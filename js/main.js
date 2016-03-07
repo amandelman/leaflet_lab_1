@@ -244,11 +244,10 @@ function updatePropSymbols(map, attribute){
         
     });
     
-    //FIX THE DAMN LEGEND SO IT SHOWS THE DISEASE
+    //FIX THE DAMN LEGEND SO IT SHOWS THE DISEASE AND so the year is right
     
-    var disease = [];
 
-    updateLegend(map, attribute, disease);
+    updateLegend(map, attribute);
     
 };
 
@@ -368,12 +367,12 @@ function createLegend(map, attributes){
 };
 
 //update temporal legend. Need to fix first index value.
-function updateLegend(map, attribute, diseaseType){
+function updateLegend(map, attribute){
     
     var year = attribute.split("es")[1];
         
     
-    var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>" + "<br>" + diseaseType;
+    var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>" + "<br>";
     
     $('.legend-control-container').html(content);
     
