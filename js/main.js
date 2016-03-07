@@ -345,22 +345,19 @@ function createLegend(map, attributes){
         onAdd: function(map){
             var container = L.DomUtil.create("div", "legend-control-container");
             
+            var year = attribute.split("es")[1];
+    
+            var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>";
+            
+            $(container).html(content);
+            
         //kill any mouse event listeners on the map
             $(container).on('mousedown dblclick', function(e){
                 L.DomEvent.stopPropagation(e);
             });
             
         return container;
-            
-        //This shit aint' workin???
-        var year = attribute.split("es")[1];
-    
-        var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>";
-    
-        $(container).html(content);
-            
-        console.log(content);
-            
+                    
         }
     });
     
