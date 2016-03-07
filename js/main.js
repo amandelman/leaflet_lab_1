@@ -237,7 +237,19 @@ function updatePropSymbols(map, attribute){
         }
     });
     
-    updateLegend(map, attribute);
+    $('.btn').click(function(layer){
+        //Set a disease variable to equal whatever button is clicked
+        var disease = $(this).html();
+        
+        
+    });
+    
+    //FIX THE DAMN LEGEND SO IT SHOWS THE DISEASE
+    
+    var disease = [];
+
+    updateLegend(map, attribute, disease);
+    
 };
 
 
@@ -289,7 +301,7 @@ function createFilterButtons(map, data){
     //Listen for button clicks
     $('.btn').click(function(layer){
         //Set a disease variable to equal whatever button is clicked
-        var disease = $(this).html();    
+        var disease = $(this).html();
     
         //Add each layer from the removed layers layergroup to the map
         filterHolder.eachLayer(function(layer){
@@ -317,8 +329,11 @@ function createFilterButtons(map, data){
             }
       
         });
+        
+        updateLegend(map, attribute, disease);
+    
     });
-
+    
 }
 
 function createLegend(map, attributes){
@@ -352,18 +367,20 @@ function createLegend(map, attributes){
     map.addControl(new LegendControl());
 };
 
-
 //update temporal legend. Need to fix first index value.
-function updateLegend(map, attribute){
+function updateLegend(map, attribute, diseaseType){
     
     var year = attribute.split("es")[1];
+        
     
-    var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>";
+    var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>" + "<br>" + diseaseType;
     
     $('.legend-control-container').html(content);
     
+
 };
 
 
 $(document).ready(createMap);
+
 
