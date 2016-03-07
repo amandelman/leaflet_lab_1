@@ -146,10 +146,12 @@ function createSequenceControls(map, attributes){
             
             $(container).append('<button class="skip" id="forward">Skip</button>');
             
+            $(container).append('<button type="button" class="btn all">All</button>');
             $(container).append('<button type="button" class="btn whooping">Whooping Cough</button>');
             $(container).append('<button type="button" class="btn measles">Measles</button>');
             $(container).append('<button type="button" class="btn mumps">Mumps</button>');
             $(container).append('<button type="button" class="btn pox">Chicken Pox</button>');
+           
             
             
             //kill any mouse event listeners on the map
@@ -278,60 +280,46 @@ function getData(map){
 };
 
 
-//Fifth interaction operator will be 4 buttons to filter for each of the 4 disease outbreak types (whooping cough, measles, mumps, chicken pox). I couldn't get it up and running, but you can see the beginnings below:
-
-//Remaining pseudocode for filter operator
-//Create filters for each disease
-//Listen for user events (sort of done?)
-//Update the map based on toggled buttons
-
+//Fifth interaction operator
 function createFilterButtons(map, data){    
-    //Create buttons for 4 diseases
-    $('#panel').append('<button type="button" class="btn whooping">Whooping Cough</button>');
-    $('#panel').append('<button type="button" class="btn measles">Measles</button>');
-    $('#panel').append('<button type="button" class="btn mumps">Mumps</button>');
-    $('#panel').append('<button type="button" class="btn pox">Chicken Pox</button>');
-  
-    //Create a container for layers we're going to remove. Note: I have no idea if this is correct.
-    var offLayers = [];
+    
+    //Create a layergroup container for layers we're going to remove.
+    var filterHolder = L.layerGroup();
         
-    //Listen for button clicks and set a disease variable to equal whatever button is clicked
+    //Listen for button clicks
     $('.btn').click(function(layer){
-        var disease = $(this).html();
-        console.log(disease);
-       
+        //Set a disease variable to equal whatever button is clicked
+        var disease = $(this).html();    
+    
+        //Add each layer from the removed layers layergroup to the map
+        filterHolder.eachLayer(function(layer){
+           map.addLayer(layer); 
+        });
+        
         //Run through each layer to see what kind of Outbreak
         map.eachLayer(function(layer){
+            //select layers with outbreak property
             if (layer.feature && String(layer.feature.properties.Outbreak)){      
-                var Outbreak = layer.feature.properties.Outbreak
-                    //compare Outbreak with disease
-                    if (Outbreak =! disease){
-                        map.removeLayer(layer.feature);
-                        //Hold layers in offLayers array??
-                        offLayers;
-                    }
-//        console.log(layer);
+                var outbreak = layer.feature.properties.Outbreak;
+                
+                //if the "all" button is clicked, add ALL layers to the removed layer layergroup
+                if (disease === "All") {
+                    filterHolder.eachLayer(function(layer){
+                        map.addLayer(layer);
+                    });
+                //otherwise, if specific disease button is clicked, remove all *other* layers and add them to the removed layer layergroup
+                } else if (outbreak != disease){
+                    filterHolder.addLayer(layer);
+                    map.removeLayer(layer);
+            
+                }               
             
             }
-        });
       
-     });
-
-//Some alerts just to show the buttons can do *something*
-    
-    $('.measles').click(function(){
-        alert("You have the measles!");
-    });
-    
-    $('.mumps').click(function(){
-        alert("MUMPS!");
+        });
     });
 
-    $('.pox').click(function(){
-        alert("Hello! A pox on you!");
-    });
-    
-};
+}
 
 function createLegend(map, attributes){
     
