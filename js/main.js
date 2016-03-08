@@ -246,7 +246,7 @@ function updatePropSymbols(map, attribute){
     
     //FIX THE DAMN LEGEND SO IT SHOWS THE DISEASE
     
-
+    console.log(attribute);
     updateLegend(map, attribute);
     
 };
@@ -331,14 +331,14 @@ function createFilterButtons(map, data){
 
 
 //PSEUDO-CODE FOR ATTRIBUTE LEGEND
-//1. Add an `<svg>` element to the legend container
-//2. Add a `<circle>` element for each of three attribute values: max, mean, and min
 //3. Assign each `<circle>` element a center and radius based on the dataset max, mean, and min values of the current attribute
 //4. Create legend text to label each circle
 //5. Update circle attributes and legend text when the data attribute is changed by the user
 
 //function to create legend
 function createLegend(map, attributes){
+    
+    console.log(attribute);
     
     attribute = attributes[0];
     
@@ -351,17 +351,25 @@ function createLegend(map, attributes){
             //create legened control container with it's own class name
             var container = L.DomUtil.create("div", "legend-control-container");
             
-            
-            
             //add temporal legand div to container
             $(container).append('<div id = "temporal-legend">');
             
-           
-            
-            
-            
             //create variable to hold svg code--with its own class--as a string
-            var svg = '<svg id="attribute-legend" width="180px" height="180px"><circle opacity="0.7" fill="#808080" cx="90" cy="90" r="90"/></svg>';
+            var svg = '<svg id="attribute-legend" width="180px" height="180px">';
+            
+//          '<circle opacity="0.7" fill="#808080" cx="90" cy="90" r="90"/></svg>';
+            
+            //array of circle names
+            var circles = ['max', 'mean', 'min',];
+            
+            //loop to add each circle and text to svg string
+            for (var i = 0; i<circles.length; i++){
+                //update circle string
+                svg += '<circle class="legend-circle" id="' + circles[i] + '" circle opacity="0.5" fill="#808080" cx="90"/>';
+            };
+            
+            //close svg string
+            svg += "</svg>";
             
             //add attribute legend svg to container
             $(container).append(svg);
@@ -385,20 +393,81 @@ function createLegend(map, attributes){
             
     //add temporal legened to temporal div in container
     $('#temporal-legend').append(content);  
+    
+//    updateLegend(map, attributes[0]);
 };
+
+
+//calculate max, mean, min values for attrubute legend circles
+function getCircleValues(map, attribute){
+    //start with min as highest and max as lowest
+    var min = Infinity;
+    var max = -Infinity;
+          
+    
+    map.eachLayer(function(layer){
+
+        //get the attribute value
+        if(layer.feature){
+            var attributeValue = Number(layer.feature.properties[attribute]);
+            
+            //test for minimum
+            if(attributeValue < min && attributeValue > 0){
+                min = attributeValue;
+            }
+            
+            //test for maximum
+            if(attributeValue > max){
+                max = attributeValue;
+            } 
+        }
+        
+    });
+    
+    //set mean
+    var mean = (max + min) / 2;
+    
+    //return values as an object
+    return {
+        max: max,
+        mean: mean,
+        min: min
+    };
+    
+    
+};
+
 
 //update temporal legend. Need to fix first index value.
 function updateLegend(map, attribute){
     
+    //create dynamically updating legend content
     var year = attribute.split("es")[1];
-        
-    
     var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>" + "<br>";
     
+    //replace legend content
     $('#temporal-legend').html(content);
+        
+    var circleValues = getCircleValues(map, attribute);
     
+    console.log(max);
+    console.log(min);
+    console.log(mean);
+    
+    for (var key in circleValues){
+        //get the radius
+        var radius = calcPropRadius(circleValues[key]);
 
+        //Step 3: assign the cy and r attributes
+        $('#'+key).attr({
+            cy: 179 - radius,
+            r: radius
+        });
+    }
+    
 };
+
+
 
 
 $(document).ready(createMap);
