@@ -19,12 +19,22 @@
 
 .legend-control-container {
     width: 350px;
-    height: 200px;
+    height: 250px;
     background-color: rgba(255,255,255,1);
     padding: -20px;
     line-height: 45px;
     text-align: center;
     border: solid gray 1px;
+}
+
+#temporal-legend {
+    width: 350px;
+    height: 40px;
+    color: black;
+    background-color: rgba(255,255,255,1);
+    padding: 0px;
+    line-height: 20px;
+    text-align: center;
 }
 
 .sequence-control-container {
@@ -42,7 +52,7 @@
 }
 
 .all {
-    background-color: rgba(128, 128, 128, 0.7);
+    background-color: rgb(128, 128, 128);
     float:left;
     margin: 0px 1px;
     border-radius: 4px;

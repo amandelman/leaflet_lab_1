@@ -244,7 +244,7 @@ function updatePropSymbols(map, attribute){
         
     });
     
-    //FIX THE DAMN LEGEND SO IT SHOWS THE DISEASE AND so the year is right
+    //FIX THE DAMN LEGEND SO IT SHOWS THE DISEASE
     
 
     updateLegend(map, attribute);
@@ -322,19 +322,22 @@ function createFilterButtons(map, data){
                 } else if (outbreak != disease){
                     filterHolder.addLayer(layer);
                     map.removeLayer(layer);
-            
                 }               
-            
             }
-      
         });
-        
-        updateLegend(map, attribute, disease);
     
     });
-    
 }
 
+
+//PSEUDO-CODE FOR ATTRIBUTE LEGEND
+//1. Add an `<svg>` element to the legend container
+//2. Add a `<circle>` element for each of three attribute values: max, mean, and min
+//3. Assign each `<circle>` element a center and radius based on the dataset max, mean, and min values of the current attribute
+//4. Create legend text to label each circle
+//5. Update circle attributes and legend text when the data attribute is changed by the user
+
+//function to create legend
 function createLegend(map, attributes){
     
     attribute = attributes[0];
@@ -345,25 +348,43 @@ function createLegend(map, attributes){
         },
         
         onAdd: function(map){
+            //create legened control container with it's own class name
             var container = L.DomUtil.create("div", "legend-control-container");
             
-            var year = attribute.split("es")[1];
-    
-            var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>";
             
-            $(container).html(content);
+            
+            //add temporal legand div to container
+            $(container).append('<div id = "temporal-legend">');
+            
+           
+            
+            
+            
+            //create variable to hold svg code--with its own class--as a string
+            var svg = '<svg id="attribute-legend" width="180px" height="180px"><circle opacity="0.7" fill="#808080" cx="90" cy="90" r="90"/></svg>';
+            
+            //add attribute legend svg to container
+            $(container).append(svg);
             
         //kill any mouse event listeners on the map
             $(container).on('mousedown dblclick', function(e){
                 L.DomEvent.stopPropagation(e);
             });
             
-        return container;
-                    
+        return container;          
         }
     });
     
     map.addControl(new LegendControl());
+    
+    
+    //create temporal legend text
+    var year = attribute.split("es")[1];
+    
+    var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>";
+            
+    //add temporal legened to temporal div in container
+    $('#temporal-legend').append(content);  
 };
 
 //update temporal legend. Need to fix first index value.
@@ -374,7 +395,7 @@ function updateLegend(map, attribute){
     
     var content = "<h3><b>" + "Vaccine-Preventable Disease Outbreaks, " + year + "</b></h3>" + "<br>";
     
-    $('.legend-control-container').html(content);
+    $('#temporal-legend').html(content);
     
 
 };
