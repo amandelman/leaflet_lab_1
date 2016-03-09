@@ -349,16 +349,16 @@ function createLegend(map, attributes){
             $(container).append('<div id = "temporal-legend">');
             
             //create variable to hold svg code--with its own class--as a string
-            var svg = '<svg id="attribute-legend" width="280px" height="280px">';
+            var svg = '<svg id="attribute-legend" width="350px" height="280px">';
                         
             //array of circle names
-//            var circles = ['max', 'mean', 'min',];
+//            var circles = ['max', 'Mean', 'min',];
             
             //Object to base loop on
             var circles = {
-            max: 270,
-            mean: 270,
-            min: 270
+                Maximum: 240,
+                Mean: 260,
+                Minimum: 280
             };
             
             //loop to add each circle and text to svg string
@@ -368,7 +368,7 @@ function createLegend(map, attributes){
             
                 //create text id in attribute legend
 //                var text = '<text id="' + circle + '-text" x="65" y="' + circles[circle] + '"></text>';
-                svg += '<text id="' + circle + '-text" x="65" y="' + circles[circle] + '"></text>';
+                svg += '<text id="' + circle + '-text" x="200" y="' + circles[circle] + '"></text>';
             };
                 
             //close svg string
@@ -401,11 +401,11 @@ function createLegend(map, attributes){
 };
 
 
-//calculate max, mean, min values for attrubute legend circles
+//calculate max, Mean, min values for attrubute legend circles
 function getCircleValues(map, attribute){
     //start with min as highest and max as lowest
-    var min = Infinity;
-    var max = -Infinity;
+    var Minimum = Infinity;
+    var Maximum = -Infinity;
           
     
     map.eachLayer(function(layer){
@@ -414,27 +414,27 @@ function getCircleValues(map, attribute){
         if(layer.feature){
             var attributeValue = Number(layer.feature.properties[attribute]);
             
-            //test for minimum
-            if(attributeValue < min && attributeValue > 0){
-                min = attributeValue;
+            //test for Minimum
+            if(attributeValue < Minimum && attributeValue > 0){
+                Minimum = attributeValue;
             }
             
-            //test for maximum
-            if(attributeValue > max){
-                max = attributeValue;
+            //test for Maximum
+            if(attributeValue > Maximum){
+                Maximum = attributeValue;
             } 
         }
         
     });
     
-    //set mean
-    var mean = (max + min) / 2;
+    //set Mean
+    var Mean = (Maximum + Minimum) / 2;
     
     //return values as an object
     return {
-        max: max,
-        mean: mean,
-        min: min
+        Maximum: Maximum,
+        Mean: Mean,
+        Minimum: Minimum
     };
     
     
@@ -463,7 +463,7 @@ function updateLegend(map, attribute){
         });
     
         //Add legend text to text id in attribute legend
-        $('#'+key+'-text').append(Math.round(circleValues[key]*100)/100 + " Cases");
+        $('#'+key+'-text').text(key + ": " + Math.round(circleValues[key]*100)/100 + " Cases");
     }
     
 };
